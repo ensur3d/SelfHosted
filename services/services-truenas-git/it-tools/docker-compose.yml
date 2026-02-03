@@ -1,0 +1,9 @@
+services:
+    it-tools:
+        ports:
+            - '8084:80'
+        container_name: it-tools
+        image: corentinth/it-tools
+        restart: unless-stopped
+        security_opt:
+            - no-new-privileges:true

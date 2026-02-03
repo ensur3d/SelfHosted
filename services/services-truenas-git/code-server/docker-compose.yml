@@ -1,0 +1,30 @@
+services:
+  code-server:
+    image: lscr.io/linuxserver/code-server:latest
+    container_name: code-server
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - PASSWORD=${PASSWORD} #optional
+      #- HASHED_PASSWORD= #optional
+      #- SUDO_PASSWORD=optional
+      #- SUDO_PASSWORD_HASH= #optional
+    volumes:
+      - ./config:/config
+      - /mnt/mnt_dat/code_server:/code-server
+      - /mnt/mnt_dat/open_web_ui:/open-webui
+      - /mnt/mnt_dat/it-tools:/it-tools
+      - /mnt/mnt_dat/cyberchef:/cyberchef
+      - /mnt/mnt_dat/homarr:/homarr
+      - /mnt/mnt_dat/draw-io:/draw-io
+      - /mnt/mnt_dat/uptime-kuma:/uptime-kuma
+      - /mnt/mnt_dat/freshrss:/freshrss
+      - /mnt/mnt_dat/dockhand:/dockhand
+      - /mnt/mnt_dat/wazuh:/wazuh
+      
+    ports:
+      - 8443:8443
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true

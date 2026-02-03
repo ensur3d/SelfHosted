@@ -1,0 +1,73 @@
+version: '3'
+
+networks:
+  graynet:
+    driver: bridge
+
+# This is how you persist data between container restarts
+volumes:
+  mongo_data:
+    driver: local
+  log_data:
+    driver: local
+  graylog_data:
+    driver: local
+
+services:
+  # Graylog stores configuration in MongoDB
+  mongo:
+    image: mongo:6.0.5-jammy
+    container_name: mongodb
+    volumes:
+      - "mongo_data:/data/db"
+    networks:
+      - graynet
+    restart: unless-stopped
+
+  # The logs themselves are stored in Opensearch
+  opensearch:
+    image: opensearchproject/opensearch:2
+    container_name: opensearch
+    env_file: .env.opensearch
+    volumes:
+      - "log_data:/usr/share/opensearch/data"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - 9200:9200/tcp
+    networks:
+      - graynet
+    restart: unless-stopped
+
+  graylog:
+    image: graylog/graylog:6.1
+    container_name: graylog
+    env_file: .env.graylog
+    entrypoint: /usr/bin/tini -- wait-for-it opensearch:9200 -- /docker-entrypoint.sh
+    volumes:
+      - "${PWD}/config/graylog/graylog.conf:/usr/share/graylog/config/graylog.conf"
+      - "graylog_data:/usr/share/graylog/data"
+    networks:
+      - graynet
+    restart: always
+    depends_on:
+      opensearch:
+        condition: "service_started"
+      mongo:
+        condition: "service_started"
+    ports:
+      - 9000:9000/tcp   # Graylog web interface and REST API
+      - 1635:1635/tcp   # Syslog
+      - 1635:1635/udp   # Syslog
+      - 1636:1636/udp   #
+      - 1637:1637/udp   #
+      - 1638:1638/udp   #
+      - 1639:1639/udp   #
+      #- 12201:12201/tcp # GELF
+      #- 12201:12201/udp # GELF
+

@@ -1,0 +1,19 @@
+services:
+  drawio:
+    image: jgraph/drawio
+    container_name: drawio
+    restart: unless-stopped
+    ports:
+      - 9080:8080
+      - 9443:8443
+    environment:
+      - PUBLIC_DNS=${PUBLIC_DNS:-domain}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://domain:9080 || exit 1"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    security_opt:
+      - no-new-privileges:true
+  
