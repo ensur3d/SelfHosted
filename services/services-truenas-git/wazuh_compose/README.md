@@ -6,7 +6,7 @@ The rest of the information needed is provided in their README.
 
 
 ## .env.manager example
-
+```bash
 INDEXER_URL=https://wazuh.indexer:9200
 
 INDEXER_USERNAME=admin
@@ -24,10 +24,10 @@ SSL_KEY=/etc/ssl/filebeat.key
 API_USERNAME=wazuh-wui
 
 API_PASSWORD=# make password (You also have to change password in config see documentation)
-
+```
 
 ## .env.dashboard example
-
+```bash
 INDEXER_USERNAME=admin
 
 INDEXER_PASSWORD=# make password
@@ -41,3 +41,4 @@ DASHBOARD_PASSWORD=# make password (need to change in config also)
 API_USERNAME=wazuh-wui
 
 API_PASSWORD=# make password
+```
